@@ -6,13 +6,6 @@ from liblinear.liblinearutil import *
 lexicon = {}  # Dictionary for the lexicon
 occurrences = {}  # Dictionary for word occurrences
 
-# Define the version and input/output files
-version = 'train'
-input_file_txt = 'data_tp1/twitter-2013' + version + '-A.txt'
-output_file_svm = 'data_tp1/twitter-2013' + version + '-A.svm'
-output_file_svm_sorted = 'data_tp1/twitter-2013' + version + '-A_sorted.svm'
-
-
 # Function to check if a string is a number
 def is_number(s):
     try:
@@ -66,10 +59,10 @@ def calculate_word_occurrences(file):
 
 
 # Function to convert the source file to SVM format
-def convert_to_svm_format(infile):
+def convert_to_svm_format(infile, outfile, outfilesorted):
     class_labels = {"positive": 1, "negative": -1, "neutral": 0}
 
-    output_file = open(output_file_svm, "w")
+    output_file = open(outfile, "w")
 
     for line in infile:
         words = line.strip().split()
@@ -91,7 +84,7 @@ def convert_to_svm_format(infile):
         # Write the line in SVM format to the output file
         output_file.write(" ".join(svm_line) + "\n")
 
-    sort_lines_by_index(output_file_svm, output_file_svm_sorted)
+    sort_lines_by_index(outfile, outfilesorted)
 
 
 # Function to calculate word occurrences in a list of words
@@ -128,12 +121,20 @@ def sort_lines_by_index(input_file, output_file):
 
 # Main function
 def main():
-    input_file = open(input_file_txt, 'r')
-    load_file(input_file)
+    # Define the version and input/output files
+    version = {'train', 'test', 'dev'}
 
-    # Reopen the file for occurrence calculation
-    input_file = open(input_file_txt, 'r')
-    convert_to_svm_format(input_file)
+    for v in version :
+        input_file_txt = 'data_tp1/twitter-2013' + v + '-A.txt'
+        output_file_svm = 'data_tp1/twitter-2013' + v + '-A.svm'
+        output_file_svm_sorted = 'data_tp1/twitter-2013' + v + '-A_sorted.svm'
+
+        input_file = open(input_file_txt, 'r')
+        load_file(input_file)
+
+        # Reopen the file for occurrence calculation
+        input_file = open(input_file_txt, 'r')
+        convert_to_svm_format(input_file,output_file_svm,output_file_svm_sorted)
 
 
 if __name__ == "__main__":
